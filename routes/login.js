@@ -14,12 +14,13 @@ router.post('/', async (req, res, next) => {
               return next(error);
             }
   
-            // 
             req.login(user, { session: false }, async (error) => {
                 if (error) return next(error);
   
                 const body = { _id: user._id, username: user.username };
-                const token = jwt.sign({ user: body }, process.env.SECRET_KEY);
+                // create token using jsonwebtoken, sets expiry time
+                const token = jwt.sign({ user: body }, process.env.SECRET_KEY, { expiresIn: "7d" });
+                console.log(token);
   
                 return res
                 .set('Authorization', 'Bearer ' + token)
