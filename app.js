@@ -1,12 +1,14 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
+const session = require("express-session");
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const passport = require('passport');
 dotenv.config();
+require('./auth/auth');
 
 var app = express();
 
@@ -31,18 +33,25 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(logger('dev'));
+app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const indexRouter = require('./routes/index'  );
-const usersRouter = require('./routes/users'  );
-const signUp      = require('./routes/sign-up');
+const indexRouter  = require('./routes/index'  );
+const usersRouter  = require('./routes/users'  );
+const signUpRouter = require('./routes/sign-up');
+const logInRouter  = require('./routes/login'  );
+const hubRouter    = require('./routes/hub'    );
 
-app.use('/',        indexRouter);
-app.use('/users',   usersRouter);
-app.use('/sign-up', signUp     );
+app.use('/',        indexRouter );
+app.use('/users',   usersRouter );
+app.use('/sign-up', signUpRouter);
+app.use('/login',   logInRouter );
+app.use('/hub', passport.authenticate('jwt', { session: false }), hubRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
