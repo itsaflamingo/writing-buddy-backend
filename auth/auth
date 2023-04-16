@@ -1,0 +1,44 @@
+const passport = require('passport');
+const localStrategy = require('passport-local').Strategy;
+const User = require('../models/user');
+const JWTstrategy = require('passport-jwt').Strategy;
+const ExtractJWT = require('passport-jwt').ExtractJwt;
+
+// login user using localStrategy
+passport.use( 'login', new localStrategy(async (username, password, done) => {
+            // find user in database if username matches what is entered by user
+          await User.findOne({ username: username })
+            .then(user => {
+                // If user doesn't exist, respond with error
+                if (!user) {
+                    return done(null, false, { message: 'User not found' });
+                  }
+                // decrypt db password and check if matches password entered by user
+                const validate = user.isValidPassword(password);
+                //   If passwords don't match, respond with error
+                if(!validate) {
+                    return done(null, false, { message: 'Wrong Password' });
+                }
+                //   If user exists and passwords match, log in
+                return done(null, user, { message: 'Logged in Successfully' });
+            }).catch(err => {
+                if(err) {
+                    return done(err);
+                }
+            });
+        }));
+
+// Extract JWT from query parameter, then verifies this token has been signed with secret/key set while logging in
+passport.use(
+  new JWTstrategy(
+    {
+      secretOrKey: process.env.SECRET,
+      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
+    },
+    async (token, done) => {
+      try {
+        return done(null, token.user);
+      } catch (error) {
+        done(error);
+      }
+    }));
