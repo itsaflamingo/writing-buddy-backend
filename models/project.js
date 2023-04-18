@@ -20,9 +20,13 @@ ProjectSchema.pre('save', function(next) {
     next();
 })
 
+ProjectSchema.virtual('project_id').get(function() {
+    return this._id;
+})
+
 // Add virtual. Use function() to access 'this'.
 ProjectSchema.virtual('url').get(function() {
-    return `/hub/project/${this._id}`;
+    return `/hub/user/${user._id}/project/${project_id}`;
 });
 
 module.exports = mongoose.model("Project", ProjectSchema);
