@@ -4,9 +4,10 @@ const Project = require('../models/project');
 const Act = require('../models/act');
 // Get all projects
 exports.acts_list = (req, res, next) => {
-    Act.find({ project: req.project._id }, 'title genre isComplete project date')
+    Act.find({ project: req.params.project_id }, 'title genre isComplete date')
         .populate({
-            path: 'project'
+            path: 'project',
+            model: 'Project'
         })
         .sort({ date: -1 })
         .exec()

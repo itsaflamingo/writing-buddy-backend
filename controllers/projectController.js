@@ -6,9 +6,6 @@ const User = require('../models/user');
 // Get all projects
 exports.projects_list = (req, res, next) => {
     Project.find({ user: req.user._id }, 'title genre isComplete date')
-        .populate({
-            path: 'acts'
-        })
         .sort({ date: -1 })
         .exec()
             .then(result => res.json(result))
@@ -21,12 +18,10 @@ exports.create_project = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
-
     (req, res, next) => {
         // Extract validation errors from request
         const errors = validationResult(req);
-
-        console.log(req.params)
+        
         User.findById(req.params.id)
             .exec()
             .then(user => {

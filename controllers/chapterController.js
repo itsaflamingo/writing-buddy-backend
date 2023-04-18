@@ -5,9 +5,10 @@ const Act = require('../models/act');
 const Chapter = require('../models/chapter');
 // Get all projects
 exports.chapters_list = (req, res, next) => {
-    Chapter.find({ act: req.act._id }, 'title body number isComplete act date')
+    Chapter.find({ act: req.params.act_id }, 'title body number isComplete act date')
         .populate({
-            path: 'act'
+            path: 'act',
+            model: 'Act'
         })
         .sort({ number: -1 })
         .exec()
