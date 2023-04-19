@@ -21,7 +21,7 @@ exports.create_project = [
     (req, res, next) => {
         // Extract validation errors from request
         const errors = validationResult(req);
-        
+
         User.findById(req.params.id)
             .exec()
             .then(user => {
@@ -60,5 +60,14 @@ exports.create_project = [
             return next(err);
         })
 }]
-// Patch single project
 // Delete single project
+exports.delete_project = (req, res, next) => {
+    Project.findByIdAndDelete(req.params.project_id)
+        .then(project => {
+            if(!project) {
+                return res.status(404).json({ message: 'Project not found' });
+            }
+            res.json({ message: 'Project deleted successfully' });
+        })
+        .catch(err => next(err));
+}

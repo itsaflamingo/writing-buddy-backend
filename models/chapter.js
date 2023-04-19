@@ -5,12 +5,12 @@ const { formatDate } = require('../methods/formatDate');
 const Schema = mongoose.Schema;
 
 const ChapterSchema = new Schema({
-    title:      { type: String,                            required: true },
-    number:     { type: Number,                            required: true },
-    body:       { type: String,                            required: true },
-    isComplete: { type: Boolean,                           required: true },
-    act:        { type: Schema.Types.ObjectId, ref: 'act', required: true },
-    date:       { type: Date, default: Date.now,           required: true }
+    title:      { type: String, required: true },
+    number:     { type: Number, required: true },
+    body:       { type: String, required: true },
+    isComplete: { type: Boolean, required: true },
+    act:        { type: Schema.Types.ObjectId, ref: 'act', required: true, onDelete: 'cascade' },
+    date:       { type: Date, default: Date.now, required: true }
 });
 
 ChapterSchema.path('title').set((title) => he.decode(title));

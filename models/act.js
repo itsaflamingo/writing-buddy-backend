@@ -5,10 +5,10 @@ const { formatDate } = require('../methods/formatDate');
 const Schema = mongoose.Schema;
 
 const ActSchema = new Schema({
-    title:      { type: String,  required: true                               },
-    isComplete: { type: Boolean, required: true                               },
-    project:    { type: Schema.Types.ObjectId, ref: 'project', required: true },
-    date:       { type: Date, default: Date.now, required: true               }
+    title:      { type: String,  required: true },
+    isComplete: { type: Boolean, required: true },
+    project:    { type: Schema.Types.ObjectId, ref: 'project', required: true, onDelete: 'cascade' },
+    date:       { type: Date, default: Date.now, required: true }
 });
 
 ActSchema.path('title').set((title) => he.decode(title));
