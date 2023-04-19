@@ -60,6 +60,75 @@ exports.create_project = [
             return next(err);
         })
 }]
+// Get project to update
+exports.get_update_project = (req, res, next) => {
+    async.waterfall([
+        // Get selected project by id in parameter
+        function(callback) {
+            Project.findById(req.params.project_id)
+            .then(project => callback(null, project))
+            .catch(err => callback(err))
+        },
+        // Error handler function
+        function(project, callback) {
+            if(project === null) {
+                const err = new Error('Project not found');
+                err.status = 404;
+                return callback(err);
+            }
+            callback(null, project)
+        }
+        // Send relevant project in response
+    ],
+    function(err, results) {
+        if(err) return next(err)
+        res.json({
+            title:      results.title,
+            genre:      results.genre,
+            isComplete: results.isComplete,
+            user:       results.user,
+            dat:        results.date
+        })
+    })
+}
+exports.patch_update_project = [
+    // Sanitize and validate
+    body('title', 'Title must not be empty')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+
+        if(!errors.isEmpty()) {
+            const error = new Error('Project not found');
+            error.status = 404;
+            return next(error);
+        }
+
+        Project.findOneAndUpdate({ _id: req.params.project_id }, { $set: {
+            title:      req.body.title,
+            genre:      req.body.genre,
+            isComplete: req.body.isComplete,
+            _id:        req.params.project_id
+        }}, { new: true })
+            .then(project => {
+                // if project cannot be found, return error
+                if(!project) {
+                    return res.status(404).json({ message: 'Project not found' })
+                }
+                // else, return response with project data
+                res.json({
+                    title:      project.title,
+                    genre:      project.genre,
+                    isComplete: project.isComplete,
+                    date:       project.date,
+                    user:       project.user
+                })
+            })
+            .catch(err => next(err))
+    }   
+]
 // Delete single project
 exports.delete_project = (req, res, next) => {
     Project.findByIdAndDelete(req.params.project_id)
