@@ -28,5 +28,5 @@ router.get('/act/:act_id/chapters', chapter_controller.chapters_list);
 router.post('/act/:act_id/chapter/create', chapter_controller.create_chapter);
 router.get('/chapter/:chapter_id', chapter_controller.get_update_chapter);
 router.patch('/chapter/:chapter_id/update', chapter_controller.patch_update_chapter);
-
+router.delete('/chapter/:chapter_id/delete', chapter_controller.delete_chapter);
 module.exports = router;

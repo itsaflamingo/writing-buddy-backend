@@ -166,3 +166,13 @@ exports.patch_update_chapter = [
             .catch(err => next(err))
     }]
 // Delete single chapter
+exports.delete_chapter = (req, res, next) => {
+    Chapter.findByIdAndDelete(req.params.chapter_id)
+        .then(chapter => {
+            if(!chapter) {
+                return res.status(404).json({ message: 'Chapter post not found' });
+            }
+            res.json({ message: 'Chapter deleted successfully' });
+        })
+        .catch(err => next(err))
+}
