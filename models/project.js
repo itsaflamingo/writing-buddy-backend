@@ -33,7 +33,6 @@ ProjectSchema.virtual('url').get(function() {
 
 // Middleware to remove child documents before deleting a project
 ProjectSchema.pre('findOneAndDelete', async function (next) {
-    console.log(this);
     const projectId = this._conditions._id;
     
     // Find all acts associated with the project

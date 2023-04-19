@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const he = require('he');
 const { formatDate } = require('../methods/formatDate');
+const Chapter = require('../models/chapter');
 
 const Schema = mongoose.Schema;
 
@@ -28,6 +29,16 @@ ActSchema.virtual('act_id').get(function() {
 ActSchema.virtual('url').get(function() {
     return `/hub/project/${this.project._id}/act/${this.act_id}`;
 });
+
+// Middleware to remove child documents before deleting a project
+ActSchema.pre('findOneAndDelete', async function (next) {
+    const actId = this._conditions._id;
+    
+    // Delete all chapters associated with the project
+    await Chapter.deleteMany({ act: actId });
+    
+    next();
+  });
 
 module.exports = mongoose.model("Act", ActSchema);
 

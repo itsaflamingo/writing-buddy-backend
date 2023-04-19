@@ -63,4 +63,14 @@ exports.create_act = [
         })
 }]
 // Patch single project
-// Delete single project
+// Delete single act
+exports.delete_act = (req, res, next) => {
+    Act.findByIdAndDelete(req.params.act_id)
+        .then(act => {
+            if(!act) {
+                return res.status(404).json({ message: 'Act not found' });
+            }
+            res.json({ message: 'Act deleted successfully' });
+        })
+        .catch(err => next(err));
+}

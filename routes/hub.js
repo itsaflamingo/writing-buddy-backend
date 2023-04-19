@@ -13,6 +13,7 @@ router.delete('/project/:project_id/delete', project_controller.delete_project);
 
 router.get('/project/:project_id/acts', act_controller.acts_list);
 router.post('/project/:project_id/act/create', act_controller.create_act);
+router.delete('/act/:act_id/delete', act_controller.delete_act);
 router.get('/act/:act_id/chapters', chapter_controller.chapters_list);
 router.post('/act/:act_id/chapter/create', chapter_controller.create_chapter);
 
