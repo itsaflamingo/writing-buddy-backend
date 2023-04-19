@@ -79,12 +79,12 @@ exports.create_chapter = [
         })
 }]
 // Patch single chapter
-exports.get_update_project = (req, res, next) => {
+exports.get_update_chapter = (req, res, next) => {
     // Async functions that execute sequentially 
     async.waterfall([
         function (callback) {
         // Get selected project by id in parameter
-          Project.findById(req.params.id)
+          Chapter.findById(req.params.chapter_id)
             .then(proj => {
             callback(null, proj);
           }).catch(err => {
