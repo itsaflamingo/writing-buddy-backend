@@ -83,39 +83,49 @@ exports.get_update_chapter = (req, res, next) => {
     // Async functions that execute sequentially 
     async.waterfall([
         function (callback) {
+            console.log(req.params)
         // Get selected project by id in parameter
           Chapter.findById(req.params.chapter_id)
-            .then(proj => {
-            callback(null, proj);
+            .then(chapter => {
+            callback(null, chapter);
           }).catch(err => {
             callback(err);
           });
         },
         // Executed after Project.findById
-        function (project, callback) {
-          if (project === null) {
-            const err = new Error('Project not found');
+        function (chapter, callback) {
+          if (chapter === null) {
+            const err = new Error('Chapter not found');
             err.status = 404;
             return callback(err);
           }
-          callback(null, project);
+          callback(null, chapter);
         }
       ],
       function (err, results) {
         if (err) return next(err);
         res.json({
-          title:        results.title,
-          isComplete:   results.isComplete,
-          genre:        results.genre,
-          user:         results.user,
-          date:         results.date
+          title:      results.title,
+          number:     results.number,
+          body:       results.body,
+          isComplete: results.isComplete,
+          act:        results.act,
+          date:       results.date
         });
       }
     )}
 // Patch single project
-exports.patch_update_project = [
+exports.patch_update_chapter = [
     // Validate and sanitize fields
     body('title', 'Title must not be empty.')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body('body', 'Body must not be empty.')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body('number', 'Include chapter number.')
         .trim()
         .isLength({ min: 1 })
         .escape(),
@@ -126,28 +136,31 @@ exports.patch_update_project = [
         
         // If errors array is not empty, handle error
         if(!errors.isEmpty()) {
-            const err = new Error('Porject not found');
+            const err = new Error('Chapter not found');
             err.status = 404;
             return next(err);
         }
         // Otherwise save updated post and update record
-        Project.findOneAndUpdate({ _id: req.params.id }, { $set: {
-            title:     req.body.title, 
-            genre:      req.body.genre, 
-            isComplete: false, 
-            _id:       req.params.id 
+        Chapter.findOneAndUpdate({ _id: req.params.chapter_id }, { $set: {
+            title:      req.body.title, 
+            number:     req.body.genre, 
+            body:       req.body.body,
+            isComplete: req.body.isComplete, 
+            _id:        req.params.id 
         }}, { new: true })
-            .then(project => {
+            .then(chapter => {
                 // blog post not found
-                if(!project) {
-                    return res.status(404).json({ message: 'Project not found' });
+                if(!chapter) {
+                    return res.status(404).json({ message: 'Chapter not found' });
                 }
                 // Successful: send updated book as json object
                 res.json({
-                    title: project.title,
-                    body:  project.body,
-                    date:  project.date,
-                    _id:   project._id
+                    title:      chapter.title, 
+                    number:     chapter.genre, 
+                    body:       chapter.body,
+                    isComplete: chapter.isComplete, 
+                    _id:        chapter.id,
+                    act:        chapter.act 
                 })
             })
             .catch(err => next(err))

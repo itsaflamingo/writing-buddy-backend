@@ -87,7 +87,7 @@ exports.get_update_project = (req, res, next) => {
             genre:      results.genre,
             isComplete: results.isComplete,
             user:       results.user,
-            dat:        results.date
+            date:        results.date
         })
     })
 }

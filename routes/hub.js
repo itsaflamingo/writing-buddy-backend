@@ -26,5 +26,7 @@ router.patch('/act/:act_id/update', act_controller.patch_update_act);
 // CHAPTER
 router.get('/act/:act_id/chapters', chapter_controller.chapters_list);
 router.post('/act/:act_id/chapter/create', chapter_controller.create_chapter);
+router.get('/chapter/:chapter_id', chapter_controller.get_update_chapter);
+router.patch('/chapter/:chapter_id/update', chapter_controller.patch_update_chapter);
 
 module.exports = router;
