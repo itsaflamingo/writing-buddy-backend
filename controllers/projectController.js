@@ -5,7 +5,11 @@ const async = require('async');
 const User = require('../models/user');
 // Get all projects
 exports.projects_list = (req, res, next) => {
-    Project.find({ user: req.user._id }, 'title genre isComplete date')
+    Project.find({ user: req.params.id }, 'title genre isComplete date')
+        .populate({
+            path: 'user',
+            model: 'User'
+        })
         .sort({ date: -1 })
         .exec()
             .then(result => res.json(result))
