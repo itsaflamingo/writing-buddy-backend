@@ -20,7 +20,6 @@ router.post('/', async (req, res, next) => {
                 const body = { _id: user._id, username: user.username };
                 // create token using jsonwebtoken, sets expiry time
                 const token = jwt.sign({ user: body }, process.env.SECRET_KEY, { expiresIn: "7d" });
-                console.log(token);
   
                 return res
                 .set('Authorization', 'Bearer ' + token)
