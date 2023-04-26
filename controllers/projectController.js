@@ -25,12 +25,14 @@ exports.create_project = [
     (req, res, next) => {
         // Extract validation errors from request
         const errors = validationResult(req);
+        console.log(req.body);
 
         User.findById(req.params.id)
             .exec()
             .then(user => {
                 // Handle errors - if errors array is not empty
                 if(!errors.isEmpty()) {
+                    console.log(errors)
                     // Return error
                     return errors;
                 }
@@ -50,19 +52,21 @@ exports.create_project = [
                 // Data from form is valid, save blog post
                 project.save()
                     .then(results => {
-                        res.json({
+                        return res.json({
                             title:      results.title,
                             genre:      results.genre,
                             isComplete: results.isComplete,
                         })
                     })
-            .catch(err => {
-                return next(err);
-            })
+                    .catch(err => {
+                        return err;
+                    })
+                return project;
         })
         .catch(err => {
-            return next(err);
+            return err;
         })
+        return;
 }]
 // Get project to update
 exports.get_update_project = (req, res, next) => {

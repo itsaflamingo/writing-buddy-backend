@@ -7,14 +7,13 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const User = require('../models/user');
 const Project = require('../models/project');
-const mongoose = require('mongoose');
 
 dotenv.config();
 require('../auth/auth');
 const app = express();
 
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-// app.use('/hub', hub);
 app.use('/login', login);
 app.use('/hub', hub);
 
@@ -22,6 +21,7 @@ describe('hub', () => {
   
   let userId;
   let userObjectId;
+  let server;
   const user = { username: 'test', password: process.env.TEST_PASSWORD };
   const token = jwt.sign({ user }, process.env.SECRET_KEY);
   const agent1 = request.agent(app);
@@ -69,13 +69,21 @@ describe('hub', () => {
   };
 
   beforeAll(async () => {
-    await initializeMongoServer();
+    initializeMongoServer()
+      .then(mongo => {
+        server = mongo;
+        mongo.startConnection();
+      })
+      .catch(err => console.log(err));
     await addUserToTestDatabase();
     await addProjectToTestDatabase();
   })
   beforeEach(() => {
     loginUser();
   })
+  afterAll(async () => {
+    await server.stopConnection();
+  });
 
   it('login', loginUser());
   it('Test get project list', done => {
@@ -102,7 +110,10 @@ describe('hub', () => {
       .expect(200)
       .expect('Content-Type', /json/)
       .then((res) => {
-        expect(res.body[0].user.username).toBe(user.username);
+        expect(res.body.title).toBe('title');
+        expect(res.body.genre).toBe('genre');
+        expect(res.body.isComplete).toBe(false);
+
         done();
       })
       .catch(err => {

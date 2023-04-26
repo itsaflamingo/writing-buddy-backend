@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "devstart": "nodemon --inspect ./bin/www",
     "serverstart": "DEBUG=express-locallibrary-tutorial:* npm run devstart",
-    "test": "cross-env NODE_ENV=test jest --testTimeout=100000"
+    "test": "cross-env NODE_ENV=test jest --testTimeout=5000"
   },
   "jest": {
     "testEnvironment": "node",
