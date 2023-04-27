@@ -54,7 +54,7 @@ describe('hub', () => {
         request(app)
             .post('/login')
             .set('Content-Type', 'application/x-www-form-urlencoded')
-            .set('Cookie', ['connect.sid=s:QPDULEgCnknt_iyMr9zqHfdCem0-5-mt.4RU4RxLjJ1VGKhlDQkn2WpExWG9uLub1ZXRnlv7pb7I; connect.sid=s:6Nbg6YcSKTfFWli70uXWwGmTfRbOpcMM.LIsbmWflnX9mKeUbdGd/HKqEz37jhdc2HrWDZW0b5M8; connect.sid=s:7zW3efdhST-etiDVYsGGcnZ55nVZMhlm.o8/dmXbkzocyOCLR0VoJxfEpntNVAK0tXbIv8YT08tY; connect.sid=s:7Sns82db5UZGF3v-0W082lHEVzonrXTq.0sPpw3umze1bJ+NyLB9h0boW4LLrqUKhGT4giwWmHoU; connect.sid=s:aexhXYGJRLYBrkvYVOR0KikHzcuOyVEF.xGfTtaAljXlYguYIbRrZA9IDjlTRgxo3cBLJrgqpYdk; connect.sid=s:YWnljcc28I92Uu7qGr083BWemuHUhPkr.5gClWzJXA3uOCQ0Om+qww9mLdlRO8EApEyAeqCE7HxY; connect.sid=s:a-xzU7fklo0gnuKvqQ-K8e_y9XWOjXpQ.Yk7WQ0GQMQir17oFsY0qatOP2XilHGjMkXfNYVv/J20; connect.sid=s:hq0XfkqKlSn038Yf6O0isUGTGLwayiH-.aobjTmsuH2jv9qsH4fS/wPzho73Tl7DbBkJ2Y9WWDNw; connect.sid=s:GRREpKTYOK86h_qiqS1q6dXFQ-IdwzYo.zsXEacq9GE/nZOdIWtdMNDBfYOs3dDTeMVRBuLVkBeE; connect.sid=s:Q_4DJ-P88ywo9MizTg-A3mwAmiYBhTn0.zRZ98I1d8gm0qgFAVcs2So0eSArn+L2uGhkfkljAJ98; connect.sid=s:RCTsoLn3uxkFAHnLx15q4XSFBqAkMIUE.C6NM+2TnA031BTO2mSsp3Qkinup97HXduMRZ808y7s4; connect.sid=s:v3pBfsNluwTm4215XLycE6nKeUiMIu9N.LQQL7GpGARaApClZB1LWrKAESAQ+/romYAx5DnAJGgk'])
+            .set('Cookie', [process.env.COOKIE])
             .send(user)
             .expect(200)
             .then(res => {
