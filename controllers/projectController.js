@@ -25,7 +25,6 @@ exports.create_project = [
     (req, res, next) => {
         // Extract validation errors from request
         const errors = validationResult(req);
-        console.log(req.body);
 
         User.findById(req.params.id)
             .exec()
@@ -56,6 +55,7 @@ exports.create_project = [
                             title:      results.title,
                             genre:      results.genre,
                             isComplete: results.isComplete,
+                            id:         results._id
                         })
                     })
                     .catch(err => {

@@ -17,22 +17,25 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/login', login);
 app.use('/hub', hub);
 
-describe('hub', () => {
+describe('hub projects', () => {
   
   let userId;
   let userObjectId;
   let server;
+  let projectId;
   const user = { username: 'test', password: process.env.TEST_PASSWORD };
   const token = jwt.sign({ user }, process.env.SECRET_KEY);
   const agent1 = request.agent(app);
 
-  async function addUserToTestDatabase() {
+  async function addToTestDatabase() {
     await User.create({
       username: 'test',
       password: 'password',
       admin: false
     })
-    .then(res => res)
+    .then(res => {
+      userObjectId = res._id;
+    })
     .catch(err => console.error(err))
   }
 
@@ -75,7 +78,7 @@ describe('hub', () => {
         mongo.startConnection();
       })
       .catch(err => console.log(err));
-    await addUserToTestDatabase();
+    await addToTestDatabase();
     await addProjectToTestDatabase();
   })
   beforeEach(() => {
@@ -87,7 +90,6 @@ describe('hub', () => {
 
   it('login', loginUser());
   it('Test get project list', done => {
-    loginUser();
     agent1
       .get(`/hub/user/${userId}/projects`)
       .set('Authorization', 'Bearer ' + token)
@@ -95,6 +97,7 @@ describe('hub', () => {
       .expect('Content-Type', /json/)
       .then((res) => {
         expect(res.body[0].user.username).toBe(user.username);
+        expect(res.body.length).toBe(1);
         done();
       })
       .catch(err => {
@@ -114,6 +117,45 @@ describe('hub', () => {
         expect(res.body.genre).toBe('genre');
         expect(res.body.isComplete).toBe(false);
 
+        projectId = res.body.id;
+
+        done();
+      })
+      .catch(err => {
+        console.error(err)
+        done(err)
+      })
+  })
+  it('Test get project to be updated', done => {
+    agent1
+      .get(`/hub/project/${projectId}`)
+      .set('Authorization', 'Bearer ' + token)
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .then((res) => {
+        expect(res.body.title).toBe('title');
+        expect(res.body.genre).toBe('genre');
+        expect(res.body.isComplete).toBe(false);
+
+        done();
+      })
+      .catch(err => {
+        console.error(err)
+        done(err)
+      })
+  })
+  it('Test update project', done => {
+    agent1
+      .patch(`/hub/project/${projectId}/update`)
+      .set('Authorization', 'Bearer ' + token)
+      .send({ title: 'updated title', genre: 'updated genre', isComplete: false, user: userObjectId })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .then((res) => {
+        expect(res.body.title).toBe('updated title');
+        expect(res.body.genre).toBe('updated genre');
+        expect(res.body.isComplete).toBe(false);
+
         done();
       })
       .catch(err => {
@@ -122,3 +164,4 @@ describe('hub', () => {
       })
   })
 })
+
