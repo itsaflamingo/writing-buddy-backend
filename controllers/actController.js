@@ -53,6 +53,7 @@ exports.create_act = [
                         res.json({
                             title:      results.title,
                             isComplete: results.isComplete,
+                            id:         results._id
                         })
                     })
             .catch(err => {
@@ -92,7 +93,7 @@ exports.get_update_act = (req, res, next) => {
           title:        results.title,
           isComplete:   results.isComplete,
           project:      results.project,
-          date:         results.date
+          date:         results.date,
         });
       }
     )}
