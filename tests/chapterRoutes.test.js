@@ -1,7 +1,6 @@
 const request = require('supertest');
 const express = require('express');
 const jwt = require('jsonwebtoken');
-
 const dotenv = require('dotenv');
 const initializeMongoServer = require('../mongoConfigTesting');
 const login = require('../routes/login');
@@ -9,6 +8,7 @@ const hub = require('../routes/hub');
 const User = require('../models/user');
 const Project = require('../models/project');
 const Act = require('../models/act');
+const Chapter = require('../models/chapter');
 
 dotenv.config();
 require('../auth/auth');
@@ -20,12 +20,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/login', login);
 app.use('/hub', hub);
 
-describe('hub acts', () => {
-  // Set up variables to be used throughout application
+describe('hub chapters', () => {
+  // Set global variables
   let server;
-  let projectId;
-  let projObjectId;
   let actId;
+  let actObjectId;
+  let chapterId;
   // User login credentials
   const user = { username: 'test', password: process.env.TEST_PASSWORD };
   // Sign jsonwebtoken with user login and secret key imported from dotenv
@@ -66,9 +66,25 @@ describe('hub acts', () => {
       isComplete: false,
       project: project._id,
     });
-    projObjectId = project._id;
-    projectId = project._id.toString().slice(0, 24);
+
     await act.save();
+  }
+
+  async function addChapterToTestDatabase() {
+    const act = await Act.findOne({ title: 'act title' });
+
+    const chapter = new Chapter({
+      title: 'chapter title',
+      number: 2,
+      body: 'chapter body',
+      isComplete: false,
+      act: act._id,
+    });
+
+    actObjectId = act._id;
+    actId = act._id.toString().slice(0, 24);
+
+    await chapter.save();
   }
 
   function loginUser() {
@@ -100,28 +116,34 @@ describe('hub acts', () => {
         mongo.startConnection();
       })
       .catch((err) => console.log(err));
-    // Add user, project, act and test to test database
+    //   Add user, project, act and test to test database
     await addToTestDatabase();
     await addProjectToTestDatabase();
     await addActToTestDatabase();
+    await addChapterToTestDatabase();
   });
   // Login user before making request
   beforeEach(() => {
     loginUser();
   });
+  // Disconnect server after all tests are completed
   afterAll(async () => {
     await server.stopConnection();
   });
 
   it('login', loginUser());
-  it('Test get acts list', (done) => {
+  it('Test get chapters list', (done) => {
     agent1
-      .get(`/hub/project/${projectId}/acts`)
+      .get(`/hub/act/${actId}/chapters`)
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
       .expect('Content-Type', /json/)
       .then((res) => {
-        expect(res.body[0].title).toBe('act title');
+        // Check that fields match what has been entered
+        expect(res.body[0].title).toBe('chapter title');
+        expect(res.body[0].body).toBe('chapter body');
+        expect(res.body[0].isComplete).toBe(false);
+        expect(res.body[0].number).toBe(2);
         expect(res.body.length).toBe(1);
         done();
       })
@@ -130,20 +152,24 @@ describe('hub acts', () => {
         done(err);
       });
   });
-  it('Test create act', (done) => {
+  it('Test create chapter', (done) => {
     agent1
-      .post(`/hub/project/${projectId}/act/create`)
+      .post(`/hub/act/${actId}/chapter/create`)
       .set('Authorization', `Bearer ${token}`)
-      .send({ title: 'act title 2', isComplete: false, project: projObjectId })
+      .send({
+        title: 'chapter 3', body: 'chapter body create', number: 3, isComplete: false, act: actObjectId,
+      })
       .expect(200)
       .expect('Content-Type', /json/)
       .then((res) => {
-        // Expect results
-        expect(res.body.title).toBe('act title 2');
+        // Check fields are correct
+        expect(res.body.title).toBe('chapter 3');
+        expect(res.body.body).toBe('chapter body create');
+        expect(res.body.number).toBe(3);
         expect(res.body.isComplete).toBe(false);
 
         // Set act id to var to be able to access update & delete routes
-        actId = res.body.id;
+        chapterId = res.body.id;
 
         done();
       })
@@ -152,14 +178,14 @@ describe('hub acts', () => {
         done(err);
       });
   });
-  it('Test get act to be updated', (done) => {
+  it('Test get chapter to be updated', (done) => {
     agent1
-      .get(`/hub/act/${actId}`)
+      .get(`/hub/chapter/${chapterId}`)
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
       .expect('Content-Type', /json/)
       .then((res) => {
-        expect(res.body.title).toBe('act title 2');
+        expect(res.body.title).toBe('chapter 3');
         expect(res.body.isComplete).toBe(false);
 
         done();
@@ -169,15 +195,19 @@ describe('hub acts', () => {
         done(err);
       });
   });
-  it('Test update act', (done) => {
+  it('Test update chapter', (done) => {
     agent1
-      .patch(`/hub/act/${actId}/update`)
+      .patch(`/hub/chapter/${chapterId}/update`)
       .set('Authorization', `Bearer ${token}`)
-      .send({ title: 'updated act', isComplete: false, project: projObjectId })
+      .send({
+        title: 'updated chapter 3', body: 'chapter body update', number: 3, isComplete: false, act: actObjectId,
+      })
       .expect(200)
       .expect('Content-Type', /json/)
       .then((res) => {
-        expect(res.body.title).toBe('updated act');
+        expect(res.body.title).toBe('updated chapter 3');
+        expect(res.body.body).toBe('chapter body update');
+        expect(res.body.number).toBe(3);
         expect(res.body.isComplete).toBe(false);
 
         done();
@@ -187,13 +217,13 @@ describe('hub acts', () => {
         done(err);
       });
   });
-  it('Test delete act', (done) => {
+  it('Test delete chapter', (done) => {
     agent1
-      .delete(`/hub/act/${actId}/delete`)
+      .delete(`/hub/chapter/${chapterId}/delete`)
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
       .then((res) => {
-        expect(res.body.message).toBe('Act deleted successfully');
+        expect(res.body.message).toBe('Chapter deleted successfully');
         done();
       })
       .catch((err) => {
