@@ -10,6 +10,7 @@ const ProjectSchema = new Schema({
   title: { type: String, required: true },
   genre: { type: String },
   isComplete: { type: Boolean, required: true },
+  isPublished: { type: Boolean, default: false, required: true },
   user: {
     type: Schema.Types.ObjectId, ref: 'user', required: true, onDelete: 'cascade',
   },

@@ -11,6 +11,7 @@ const ActSchema = new Schema({
   project: {
     type: Schema.Types.ObjectId, ref: 'project', required: true, onDelete: 'cascade',
   },
+  isPublished: { type: Boolean, default: false, required: true },
   date: { type: Date, default: Date.now, required: true },
 });
 

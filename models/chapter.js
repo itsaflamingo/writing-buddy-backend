@@ -8,6 +8,7 @@ const ChapterSchema = new Schema({
   title: { type: String, required: true },
   number: { type: Number, required: true },
   body: { type: String, required: true },
+  isPublished: { type: Boolean, default: false, required: true },
   isComplete: { type: Boolean, required: true },
   act: {
     type: Schema.Types.ObjectId, ref: 'act', required: true, onDelete: 'cascade',

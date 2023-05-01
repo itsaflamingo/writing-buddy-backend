@@ -52,6 +52,7 @@ describe('hub chapters', () => {
       title: 'title1',
       genre: 'genre1',
       isComplete: false,
+      isPublished: true,
       user: user._id,
     });
     // Save project to mongoose
@@ -64,6 +65,7 @@ describe('hub chapters', () => {
     const act = new Act({
       title: 'act title',
       isComplete: false,
+      isPublished: true,
       project: project._id,
     });
 
@@ -78,6 +80,7 @@ describe('hub chapters', () => {
       number: 2,
       body: 'chapter body',
       isComplete: false,
+      isPublished: true,
       act: act._id,
     });
 

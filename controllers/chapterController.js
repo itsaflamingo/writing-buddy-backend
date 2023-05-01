@@ -5,7 +5,7 @@ const Act = require('../models/act');
 const Chapter = require('../models/chapter');
 // Get all chapters
 exports.chapters_list = (req, res, next) => {
-  Chapter.find({ act: req.params.act_id }, 'title body number isComplete act date')
+  Chapter.find({ act: req.params.act_id, isPublished: true }, 'title body number isComplete act date isPublished')
     .populate({
       path: 'act',
       model: 'Act',
@@ -58,6 +58,7 @@ exports.create_chapter = [
           body: req.body.body,
           number: req.body.number,
           isComplete: req.body.isComplete,
+          isPublished: req.body.isPublished,
           act: act._id,
         });
         // Data from form is valid, save blog post
@@ -68,6 +69,7 @@ exports.create_chapter = [
               number: results.number,
               body: results.body,
               isComplete: results.isComplete,
+              isPublished: results.isPublished,
               id: results._id,
             });
           })
@@ -81,7 +83,6 @@ exports.get_update_chapter = (req, res, next) => {
   async.waterfall(
     [
       function (callback) {
-        console.log(req.params);
         // Get selected project by id in parameter
         Chapter.findById(req.params.chapter_id)
           .then((chapter) => {
@@ -102,11 +103,12 @@ exports.get_update_chapter = (req, res, next) => {
     ],
     (err, results) => {
       if (err) return next(err);
-      res.json({
+      return res.json({
         title: results.title,
         number: results.number,
         body: results.body,
         isComplete: results.isComplete,
+        isPublished: results.isPublished,
         act: results.act,
         date: results.date,
       });
@@ -146,6 +148,7 @@ exports.patch_update_chapter = [
         number: req.body.number,
         body: req.body.body,
         isComplete: req.body.isComplete,
+        isPublished: req.body.isPublished,
         _id: req.params.id,
       },
     }, { new: true })
@@ -155,11 +158,12 @@ exports.patch_update_chapter = [
           return res.status(404).json({ message: 'Chapter not found' });
         }
         // Successful: send updated book as json object
-        res.json({
+        return res.json({
           title: chapter.title,
           number: chapter.number,
           body: chapter.body,
           isComplete: chapter.isComplete,
+          isPublished: chapter.isPublished,
           _id: chapter.id,
           act: chapter.act,
         });
@@ -173,7 +177,7 @@ exports.delete_chapter = (req, res, next) => {
       if (!chapter) {
         return res.status(404).json({ message: 'Chapter post not found' });
       }
-      res.json({ message: 'Chapter deleted successfully' });
+      return res.json({ message: 'Chapter deleted successfully' });
     })
     .catch((err) => next(err));
 };

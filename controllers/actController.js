@@ -5,7 +5,7 @@ const Project = require('../models/project');
 const Act = require('../models/act');
 // Get all projects
 exports.acts_list = (req, res, next) => {
-  Act.find({ project: req.params.project_id }, 'title genre isComplete date')
+  Act.find({ project: req.params.project_id, isPublished: true }, 'title genre isComplete date isPublished')
     .populate({
       path: 'project',
       model: 'Project',
@@ -45,6 +45,7 @@ exports.create_act = [
         const act = new Act({
           title: req.body.title,
           isComplete: req.body.isComplete,
+          isPublished: req.body.isPublished,
           project: project._id,
         });
         // Data from form is valid, save blog post
@@ -53,6 +54,7 @@ exports.create_act = [
             res.json({
               title: results.title,
               isComplete: results.isComplete,
+              isPublished: results.isPublished,
               id: results._id,
             });
           })
@@ -89,6 +91,7 @@ exports.get_update_act = (req, res, next) => {
       res.json({
         title: results.title,
         isComplete: results.isComplete,
+        isPublished: results.isPublished,
         project: results.project,
         date: results.date,
       });
@@ -118,6 +121,7 @@ exports.patch_update_act = [
       $set: {
         title: req.body.title,
         isComplete: req.body.isComplete,
+        isPublished: req.body.isPublished,
         _id: req.params.act_id,
       },
     }, { new: true })
@@ -127,9 +131,10 @@ exports.patch_update_act = [
           return res.status(404).json({ message: 'Act not found' });
         }
         // Successful: send updated book as json object
-        res.json({
+        return res.json({
           title: act.title,
           isComplete: act.isComplete,
+          isPublished: act.isPublished,
           project: act.project,
           date: act.date,
           _id: act._id,
@@ -144,7 +149,7 @@ exports.delete_act = (req, res, next) => {
       if (!act) {
         return res.status(404).json({ message: 'Act not found' });
       }
-      res.json({ message: 'Act deleted successfully' });
+      return res.json({ message: 'Act deleted successfully' });
     })
     .catch((err) => next(err));
 };

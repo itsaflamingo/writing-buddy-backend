@@ -5,7 +5,7 @@ const Project = require('../models/project');
 const User = require('../models/user');
 // Get all projects
 exports.projects_list = (req, res, next) => {
-  Project.find({ user: req.params.id }, 'title genre isComplete date')
+  Project.find({ user: req.params.id, isPublished: true }, 'title genre isComplete date isPublished')
     .populate({
       path: 'user',
       model: 'User',
@@ -46,6 +46,7 @@ exports.create_project = [
           title: req.body.title,
           genre: req.body.genre,
           isComplete: req.body.isComplete,
+          isPublished: req.body.isPublished,
           user: user._id,
         });
         // Data from form is valid, save blog post
@@ -54,6 +55,7 @@ exports.create_project = [
             title: results.title,
             genre: results.genre,
             isComplete: results.isComplete,
+            isPublished: results.isPublished,
             id: results._id,
           }))
           .catch((err) => err);
@@ -84,10 +86,11 @@ exports.get_update_project = (req, res, next) => {
     ],
     (err, results) => {
       if (err) return next(err);
-      res.json({
+      return res.json({
         title: results.title,
         genre: results.genre,
         isComplete: results.isComplete,
+        isPublished: results.isPublished,
         user: results.user,
         date: results.date,
       });
@@ -109,11 +112,12 @@ exports.patch_update_project = [
       return next(error);
     }
 
-    Project.findOneAndUpdate({ _id: req.params.project_id }, {
+    return Project.findOneAndUpdate({ _id: req.params.project_id }, {
       $set: {
         title: req.body.title,
         genre: req.body.genre,
         isComplete: req.body.isComplete,
+        isPublished: req.body.isPublished,
         _id: req.params.project_id,
       },
     }, { new: true })
@@ -123,10 +127,11 @@ exports.patch_update_project = [
           return res.status(404).json({ message: 'Project not found' });
         }
         // else, return response with project data
-        res.json({
+        return res.json({
           title: project.title,
           genre: project.genre,
           isComplete: project.isComplete,
+          isPublished: project.isPublished,
           date: project.date,
           user: project.user,
         });
@@ -141,7 +146,7 @@ exports.delete_project = (req, res, next) => {
       if (!project) {
         return res.status(404).json({ message: 'Project not found' });
       }
-      res.json({ message: 'Project deleted successfully' });
+      return res.json({ message: 'Project deleted successfully' });
     })
     .catch((err) => next(err));
 };

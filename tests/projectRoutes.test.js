@@ -56,6 +56,7 @@ describe('hub projects', () => {
       title: 'title1',
       genre: 'genre1',
       isComplete: false,
+      isPublished: true,
       user: user._id,
     });
     // Save project to mongoose
@@ -95,8 +96,6 @@ describe('hub projects', () => {
     // Add user, project, act and test to test database
     await addToTestDatabase();
     await addProjectToTestDatabase();
-    await addActToTestDatabase();
-    await addChapterToTestDatabase();
   });
   // Login user before making request
   beforeEach(() => {
