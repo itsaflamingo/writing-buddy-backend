@@ -24,7 +24,10 @@ router.post('/', async (req, res, next) => {
 
         return res
           .set('Authorization', `Bearer ${token}`)
-          .json({ user: body });
+          .json({
+            user: body,
+            token,
+          });
       });
     } catch (error) {
       return next(error);
