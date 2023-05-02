@@ -32,13 +32,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 const signUpRouter = require('./routes/sign-up');
 const logInRouter = require('./routes/login');
 const hubRouter = require('./routes/hub');
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/sign-up', signUpRouter);
 app.use('/login', logInRouter);
 app.use('/hub', passport.authenticate('jwt', { session: false }), hubRouter);
