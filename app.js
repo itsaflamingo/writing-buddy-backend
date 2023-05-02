@@ -32,6 +32,7 @@ const signUpRouter = require('./routes/sign-up');
 const logInRouter = require('./routes/login');
 const hubRouter = require('./routes/hub');
 
+console.log('routers');
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/sign-up', signUpRouter);

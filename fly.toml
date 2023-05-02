@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for writing-buddy on 2023-05-02T06:15:13-04:00
+# fly.toml app configuration file generated for writing-buddy on 2023-05-02T07:23:10-04:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -16,6 +16,7 @@ kill_timeout = "5s"
 
 [env]
   PRIMARY_REGION = "bos"
+  PORT="8080"
 
 [[services]]
   protocol = "tcp"
