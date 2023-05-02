@@ -6,12 +6,17 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const dotenv = require('dotenv');
 const passport = require('passport');
+const cors = require('cors');
 
 dotenv.config();
-require('./auth/auth');
-require('./mongoConfig');
 
 const app = express();
+
+app.use(cors());
+app.options('*', cors());
+
+require('./auth/auth');
+require('./mongoConfig');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
