@@ -52,6 +52,7 @@ function normalizePort(val) {
 /**
  * Event listener for HTTP server "error" event.
  */
+console.log('Port listening on', port);
 
 function onError(error) {
   if (error.syscall !== 'listen') {
