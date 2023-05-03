@@ -5,7 +5,7 @@ const Project = require('../models/project');
 const User = require('../models/user');
 // Get all projects
 exports.projects_list = (req, res, next) => {
-  Project.find({ user: req.params.id, isPublished: true }, 'title genre isComplete date isPublished')
+  Project.find({ user: req.params.id }, 'title genre isComplete date isPublished')
     .populate({
       path: 'user',
       model: 'User',

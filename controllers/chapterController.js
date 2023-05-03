@@ -5,7 +5,7 @@ const Act = require('../models/act');
 const Chapter = require('../models/chapter');
 // Get all chapters
 exports.chapters_list = (req, res, next) => {
-  Chapter.find({ act: req.params.act_id, isPublished: true }, 'title body number isComplete act date isPublished')
+  Chapter.find({ act: req.params.act_id }, 'title body number isComplete act date isPublished')
     .populate({
       path: 'act',
       model: 'Act',

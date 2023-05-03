@@ -5,7 +5,7 @@ const Project = require('../models/project');
 const Act = require('../models/act');
 // Get all projects
 exports.acts_list = (req, res, next) => {
-  Act.find({ project: req.params.project_id, isPublished: true }, 'title genre isComplete date isPublished')
+  Act.find({ project: req.params.project_id }, 'title genre isComplete date isPublished')
     .populate({
       path: 'project',
       model: 'Project',
