@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 const async = require('async');
 const Project = require('../models/project');
 const User = require('../models/user');
+const { formatDate } = require('../methods/formatDate');
 // Get all projects
 exports.projects_list = (req, res, next) => {
   Project.find({ user: req.params.id }, 'title genre isComplete date isPublished')
@@ -12,7 +13,10 @@ exports.projects_list = (req, res, next) => {
     })
     .sort({ date: -1 })
     .exec()
-    .then((result) => res.json(result))
+    .then((result) => {
+      result.map((project) => project.date = formatDate(project.date));
+      return res.json(result);
+    })
     .catch((err) => next(err));
 };
 // Post new project

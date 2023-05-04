@@ -17,12 +17,6 @@ const ActSchema = new Schema({
 
 ActSchema.path('title').set((title) => he.decode(title));
 
-// Format date before saving to database
-ActSchema.pre('save', function (next) {
-  this.date = formatDate(this.date);
-  next();
-});
-
 // Add virtual. Use function() to access 'this'.
 ActSchema.virtual('act_id').get(function () {
   return this._id;

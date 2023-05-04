@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 const async = require('async');
 const Project = require('../models/project');
 const Act = require('../models/act');
+const { formatDate } = require('../methods/formatDate');
 // Get all projects
 exports.acts_list = (req, res, next) => {
   Act.find({ project: req.params.project_id }, 'title genre isComplete date isPublished')
@@ -12,7 +13,10 @@ exports.acts_list = (req, res, next) => {
     })
     .sort({ date: -1 })
     .exec()
-    .then((result) => res.json(result))
+    .then((result) => {
+      result.map((act) => act.date = formatDate(act.date));
+      return res.json(result);
+    })
     .catch((err) => next(err));
 };
 // Post new project
@@ -50,7 +54,7 @@ exports.create_act = [
         });
         // Data from form is valid, save blog post
         act.save()
-          .then((results) => {
+          .then((results) => {            
             res.json({
               title: results.title,
               isComplete: results.isComplete,

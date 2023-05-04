@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const he = require('he');
-const { formatDate } = require('../methods/formatDate');
 const Act = require('./act');
 const Chapter = require('./chapter');
 
@@ -18,12 +17,6 @@ const ProjectSchema = new Schema({
 });
 
 ProjectSchema.path('title').set((title) => he.decode(title));
-
-// Format date before saving to database
-ProjectSchema.pre('save', function (next) {
-  this.date = formatDate(this.date);
-  next();
-});
 
 ProjectSchema.virtual('project_id').get(function () {
   return this._id;
