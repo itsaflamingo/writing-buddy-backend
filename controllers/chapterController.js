@@ -71,6 +71,7 @@ exports.create_chapter = [
               isComplete: results.isComplete,
               isPublished: results.isPublished,
               id: results._id,
+              date_formatted: results.date_formatted,
             });
           })
           .catch((err) => next(err));
@@ -110,7 +111,7 @@ exports.get_update_chapter = (req, res, next) => {
         isComplete: results.isComplete,
         isPublished: results.isPublished,
         act: results.act,
-        date: results.date,
+        date_formatted: results.date_formatted,
       });
     },
   );
@@ -166,6 +167,7 @@ exports.patch_update_chapter = [
           isPublished: chapter.isPublished,
           _id: chapter.id,
           act: chapter.act,
+          date_formatted: chapter.date_formatted,
         });
       })
       .catch((err) => next(err));

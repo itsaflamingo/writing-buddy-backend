@@ -3,7 +3,6 @@ const { body, validationResult } = require('express-validator');
 const async = require('async');
 const Project = require('../models/project');
 const Act = require('../models/act');
-const { formatDate } = require('../methods/formatDate');
 // Get all projects
 exports.acts_list = (req, res, next) => {
   Act.find({ project: req.params.project_id }, 'title genre isComplete date isPublished')
@@ -13,10 +12,7 @@ exports.acts_list = (req, res, next) => {
     })
     .sort({ date: -1 })
     .exec()
-    .then((result) => {
-      result.map((act) => act.date = formatDate(act.date));
-      return res.json(result);
-    })
+    .then((result) => res.json(result))
     .catch((err) => next(err));
 };
 // Post new project
@@ -54,12 +50,13 @@ exports.create_act = [
         });
         // Data from form is valid, save blog post
         act.save()
-          .then((results) => {            
+          .then((results) => {
             res.json({
               title: results.title,
               isComplete: results.isComplete,
               isPublished: results.isPublished,
               id: results._id,
+              date_formatted: results.date_formatted,
             });
           })
           .catch((err) => next(err));
@@ -97,7 +94,7 @@ exports.get_update_act = (req, res, next) => {
         isComplete: results.isComplete,
         isPublished: results.isPublished,
         project: results.project,
-        date: results.date,
+        date_formatted: results.date_formatted,
       });
     },
   );
@@ -140,7 +137,7 @@ exports.patch_update_act = [
           isComplete: act.isComplete,
           isPublished: act.isPublished,
           project: act.project,
-          date: act.date,
+          date_formatted: act.date_formatted,
           _id: act._id,
         });
       })

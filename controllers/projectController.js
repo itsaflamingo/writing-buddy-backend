@@ -3,7 +3,6 @@ const { body, validationResult } = require('express-validator');
 const async = require('async');
 const Project = require('../models/project');
 const User = require('../models/user');
-const { formatDate } = require('../methods/formatDate');
 // Get all projects
 exports.projects_list = (req, res, next) => {
   Project.find({ user: req.params.id }, 'title genre isComplete date isPublished')
@@ -13,10 +12,7 @@ exports.projects_list = (req, res, next) => {
     })
     .sort({ date: -1 })
     .exec()
-    .then((result) => {
-      result.map((project) => project.date = formatDate(project.date));
-      return res.json(result);
-    })
+    .then((result) => res.json(result))
     .catch((err) => next(err));
 };
 // Post new project
@@ -61,6 +57,7 @@ exports.create_project = [
             isComplete: results.isComplete,
             isPublished: results.isPublished,
             id: results._id,
+            date_formatted: results.date_formatted,
           }))
           .catch((err) => err);
         return project;
@@ -96,7 +93,7 @@ exports.get_update_project = (req, res, next) => {
         isComplete: results.isComplete,
         isPublished: results.isPublished,
         user: results.user,
-        date: results.date,
+        date_formatted: results.date_formatted,
       });
     },
   );
@@ -138,6 +135,7 @@ exports.patch_update_project = [
           isPublished: project.isPublished,
           date: project.date,
           user: project.user,
+          date_formatted: project.date_formatted,
         });
       })
       .catch((err) => next(err));

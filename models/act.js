@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const he = require('he');
-const { formatDate } = require('../methods/formatDate');
+const { DateTime } = require('luxon');
 const Chapter = require('./chapter');
 
 const { Schema } = mongoose;
@@ -13,8 +13,12 @@ const ActSchema = new Schema({
   },
   isPublished: { type: Boolean, default: false, required: true },
   date: { type: Date, default: Date.now, required: true },
+}, {
+  toObject: { virtuals: true },
+  toJSON: { virtuals: true },
 });
 
+// Decodes HTML encoded characters
 ActSchema.path('title').set((title) => he.decode(title));
 
 // Add virtual. Use function() to access 'this'.
@@ -25,6 +29,10 @@ ActSchema.virtual('act_id').get(function () {
 // Add virtual. Use function() to access 'this'.
 ActSchema.virtual('url').get(function () {
   return `/hub/project/${this.project._id}/act/${this.act_id}`;
+});
+
+ActSchema.virtual('date_formatted').get(function () {
+  return DateTime.fromJSDate(this.date).toLocaleString(DateTime.DATE_MED);
 });
 
 // Middleware to remove child documents before deleting a project

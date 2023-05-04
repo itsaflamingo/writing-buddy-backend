@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const he = require('he');
-const { formatDate } = require('../methods/formatDate');
+const { DateTime } = require('luxon');
 
 const { Schema } = mongoose;
 
@@ -14,20 +14,22 @@ const ChapterSchema = new Schema({
     type: Schema.Types.ObjectId, ref: 'act', required: true, onDelete: 'cascade',
   },
   date: { type: Date, default: Date.now, required: true },
+}, {
+  // Turns virtuals into JSON that is added to the results object later
+  toObject: { virtuals: true },
+  toJSON: { virtuals: true },
 });
-
+// Decodes HTML encoded characters 
 ChapterSchema.path('title').set((title) => he.decode(title));
 ChapterSchema.path('body').set((body) => he.decode(body));
-
-// Format date before saving to database
-ChapterSchema.pre('save', function (next) {
-  this.date = formatDate(this.date);
-  next();
-});
 
 // Add virtual. Use function() to access 'this'.
 ChapterSchema.virtual('chapter_id').get(function () {
   return this._id;
+});
+
+ChapterSchema.virtual('date_formatted').get(function () {
+  return DateTime.fromJSDate(this.date).toLocaleString(DateTime.DATE_MED);
 });
 
 // Add virtual. Use function() to access 'this'.
