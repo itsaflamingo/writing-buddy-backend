@@ -1,6 +1,6 @@
 const { DateTime } = require('luxon');
 
-const formatDate = (date) => DateTime.fromJSDate(date).toLocaleString(DateTime.DATE_MED);
+const formatDate = (date) => DateTime.fromJSDate(date).toFormat('EEEE, MMMM d, yyyy');
 
 module.exports = {
   formatDate,
