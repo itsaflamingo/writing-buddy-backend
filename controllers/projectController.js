@@ -136,6 +136,7 @@ exports.patch_update_project = [
           date: project.date,
           user: project.user,
           date_formatted: project.date_formatted,
+          id: project._id,
         });
       })
       .catch((err) => next(err));

@@ -34,11 +34,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 const indexRouter = require('./routes/index');
 const signUpRouter = require('./routes/sign-up');
 const logInRouter = require('./routes/login');
+const logoutRouter = require('./routes/logout');
 const hubRouter = require('./routes/hub');
 
 app.use('/', indexRouter);
 app.use('/sign-up', signUpRouter);
 app.use('/login', logInRouter);
+app.use('/logout', logoutRouter);
 app.use('/hub', passport.authenticate('jwt', { session: false }), hubRouter);
 
 // catch 404 and forward to error handler
