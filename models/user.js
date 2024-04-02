@@ -10,6 +10,29 @@ const UserSchema = new Schema({
   username: { type: String, required: true },
   password: { type: String, required: true },
   admin: { type: Boolean, required: true },
+  profileInfo: {
+    profilePicture: { type: String },
+    bio: { type: String },
+    followers: [{
+      user: {
+        type: Schema.Types.ObjectId, ref: 'user', required: false,
+      },
+    },
+    ],
+    following: [{
+      user: {
+        type: Schema.Types.ObjectId, ref: 'user', required: false,
+      }
+    },
+    ],
+    pinnedProjects: [
+      {
+        project: {
+          type: Schema.Types.ObjectId, ref: 'project', required: true, onDelete: 'cascade',
+        },
+      },
+    ],
+  },
 });
 // Save individual hashed password
 UserSchema.pre(
