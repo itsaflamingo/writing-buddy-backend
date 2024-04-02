@@ -17,21 +17,29 @@ const UserSchema = new Schema({
       user: {
         type: Schema.Types.ObjectId, ref: 'user', required: false,
       },
-    },
-    ],
+    }],
     following: [{
       user: {
         type: Schema.Types.ObjectId, ref: 'user', required: false,
-      }
+      },
     },
     ],
     pinnedProjects: [
       {
         project: {
-          type: Schema.Types.ObjectId, ref: 'project', required: true, onDelete: 'cascade',
+          type: Schema.Types.ObjectId, ref: 'project', required: true,
         },
       },
     ],
+    postingTracker: [{
+      date: { type: Date, default: Date.now, required: true },
+      month: { type: Number },
+      year: { type: Number },
+      contributions: [{
+        type: Schema.Types.ObjectId, ref: 'project',
+      }],
+      dayContributions: { type: Number },
+    }],
   },
 });
 // Save individual hashed password
@@ -81,7 +89,7 @@ UserSchema.pre('findOneAndDelete', async function (next) {
     // Delete all acts associated with the project
     await Act.deleteMany({ project: projectId });
   }
-  // Delete all acts associated with the project
+  // Delete all projects associated with the user
   await Project.deleteMany({ user: userId });
 
   next();
