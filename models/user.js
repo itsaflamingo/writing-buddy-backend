@@ -22,21 +22,20 @@ const UserSchema = new Schema({
       user: {
         type: Schema.Types.ObjectId, ref: 'user', required: false,
       },
-    },
-    ],
-    pinnedProjects: [
-      {
-        project: {
-          type: Schema.Types.ObjectId, ref: 'project', required: true,
-        },
+    }],
+    pinnedProjects: [{
+      project: {
+        type: Schema.Types.ObjectId, ref: 'project', required: true,
       },
-    ],
+    }],
     postingTracker: [{
       date: { type: Date, default: Date.now, required: true },
       month: { type: Number },
       year: { type: Number },
       contributions: [{
-        type: Schema.Types.ObjectId, ref: 'project',
+        project: {
+          type: Schema.Types.ObjectId, ref: 'project',
+        },
       }],
       dayContributions: { type: Number },
     }],
