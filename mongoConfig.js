@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 // Prepare for Mongoose 7
-mongoose.set('strictQuery', false);
+mongoose.set("strictQuery", false);
 // Define databse URL to connect to
 const mongoDB = process.env.URI;
 // Wait for database to connect, logging an error if there is a problem

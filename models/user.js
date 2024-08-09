@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const { Schema } = mongoose;
-const Project = require('./project');
-const Act = require('./act');
-const Chapter = require('./chapter');
+const Project = require("./project");
+const Act = require("./act");
+const Chapter = require("./chapter");
 
 const UserSchema = new Schema({
   username: { type: String, required: true },
@@ -13,50 +13,65 @@ const UserSchema = new Schema({
   profileInfo: {
     profilePicture: { type: String },
     bio: { type: String },
-    followers: [{
-      user: {
-        type: Schema.Types.ObjectId, ref: 'user', required: false,
-      },
-    }],
-    following: [{
-      user: {
-        type: Schema.Types.ObjectId, ref: 'user', required: false,
-      },
-    }],
-    pinnedProjects: [{
-      project: {
-        type: Schema.Types.ObjectId, ref: 'project', required: true,
-      },
-    }],
-    postingTracker: [{
-      date: { type: Date, default: Date.now, required: true },
-      month: { type: Number },
-      year: { type: Number },
-      contributions: [{
-        project: {
-          type: Schema.Types.ObjectId, ref: 'project',
+    followers: [
+      {
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: "user",
+          required: false,
         },
-      }],
-      dayContributions: { type: Number },
-    }],
+      },
+    ],
+    following: [
+      {
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: "user",
+          required: false,
+        },
+      },
+    ],
+    pinnedProjects: [
+      {
+        project: {
+          type: Schema.Types.ObjectId,
+          ref: "project",
+          required: false,
+        },
+      },
+    ],
+    postingTracker: [
+      {
+        date: { type: Date, default: Date.now, required: false },
+        month: { type: Number },
+        year: { type: Number },
+        contributions: [
+          {
+            project: {
+              type: Schema.Types.ObjectId,
+              ref: "project",
+            },
+          },
+        ],
+        dayContributions: { type: Number },
+      },
+    ],
   },
 });
 // Save individual hashed password
-UserSchema.pre(
-  'save',
-  async function (next) {
-    // select schema
-    let { password } = this;
-    // encrypt password
-    const hash = await bcrypt.hash(password, 10);
-    // save to password
-    password = hash;
-    // next
-    next();
-  },
-);
+UserSchema.pre("save", async function (next) {
+  // select schema
+  let { password } = this;
+  // encrypt password
+  const hash = await bcrypt.hash(password, 10);
+  // save to password
+  password = hash;
+  // next
+  next();
+});
 // Add isValidPassword to UserSchema methods, compares form password with saved password
 UserSchema.methods.isValidPassword = async function (password) {
+  console.log("is valid password");
   // save this schema to user
   const userPassword = this.password;
   // compare entered password with saved passsword
@@ -66,7 +81,7 @@ UserSchema.methods.isValidPassword = async function (password) {
 };
 
 // Middleware to remove child documents before deleting a user
-UserSchema.pre('findOneAndDelete', async function (next) {
+UserSchema.pre("findOneAndDelete", async function (next) {
   const userId = this._conditions._id;
 
   // Find all projects associated with the user
@@ -94,4 +109,4 @@ UserSchema.pre('findOneAndDelete', async function (next) {
   next();
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model("User", UserSchema);

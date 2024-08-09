@@ -1,10 +1,10 @@
-const express = require('express');
+const express = require("express");
 
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const User = require('../models/user');
+const bcrypt = require("bcryptjs");
+const User = require("../models/user");
 
-router.post('/', async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
     // Create new user, save result to user object
     const user = new User({
@@ -14,7 +14,7 @@ router.post('/', async (req, res, next) => {
     });
 
     // Create bashed password, replace user.password
-    bcrypt.hash('somePassword', 10, async (err, hashedPassword) => {
+    bcrypt.hash("somePassword", 10, async (err, hashedPassword) => {
       // if err, do something
       if (err) {
         next(err);
