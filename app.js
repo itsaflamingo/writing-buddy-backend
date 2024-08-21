@@ -41,13 +41,23 @@ const indexRouter = require("./routes/index");
 const signUpRouter = require("./routes/sign-up");
 const logInRouter = require("./routes/login");
 const logoutRouter = require("./routes/logout");
-const hubRouter = require("./routes/hub");
+const userRouter = require("./routes/user");
+const projectRouter = require("./routes/project");
+const actRouter = require("./routes/act");
+const chapterRouter = require("./routes/chapter");
+
+// used to authenticate protected routes
+const authenticate = passport.authenticate("jwt", { session: false });
 
 app.use("/", indexRouter);
 app.use("/sign-up", signUpRouter);
 app.use("/login", logInRouter);
 app.use("/logout", logoutRouter);
-app.use("/hub", passport.authenticate("jwt", { session: false }), hubRouter);
+// Protected routes
+app.use("/user", authenticate, userRouter);
+app.use("/project", authenticate, projectRouter);
+app.use("/act", authenticate, actRouter);
+app.use("/chapter", authenticate, chapterRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

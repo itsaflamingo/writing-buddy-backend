@@ -25,6 +25,8 @@ router.post("/", async (req, res, next) => {
           expiresIn: "7d",
         });
 
+        console.log(token);
+
         return res.set("Authorization", `Bearer ${token}`).json({
           user: body,
           token,
