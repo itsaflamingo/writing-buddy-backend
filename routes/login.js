@@ -18,14 +18,16 @@ router.post("/", async (req, res, next) => {
       req.login(user, { session: false }, async (error) => {
         if (error) return next(error);
 
-        const body = { _id: user._id, username: user.username };
+        const body = {
+          _id: user._id,
+          username: user.username,
+          profileInfo: user.profileInfo,
+        };
         // create token using jsonwebtoken, sets expiry time
         // jwt.sign(payload, secretOrPrivateKey, [options, callback])
         const token = jwt.sign({ user: body }, process.env.SECRET_KEY, {
           expiresIn: "7d",
         });
-
-        console.log(token);
 
         return res.set("Authorization", `Bearer ${token}`).json({
           user: body,
