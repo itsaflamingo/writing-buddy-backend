@@ -10,14 +10,11 @@ router.post("/", async (req, res, next) => {
       // Send error if there is an error or user is not defined
       if (err || !user) {
         const error = new Error("An error occurred.");
-        console.log(error);
 
         return next(error);
       }
 
       req.login(user, { session: false }, async (error) => {
-        if (error) return next(error);
-
         const body = {
           _id: user._id,
           username: user.username,

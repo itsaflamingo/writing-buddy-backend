@@ -71,7 +71,6 @@ UserSchema.pre("save", async function (next) {
 });
 // Add isValidPassword to UserSchema methods, compares form password with saved password
 UserSchema.methods.isValidPassword = async function (password) {
-  console.log("is valid password");
   // save this schema to user
   const userPassword = this.password;
   // compare entered password with saved passsword
