@@ -34,7 +34,7 @@ ProjectSchema.virtual("project_id").get(function () {
 
 // Add virtual. Use function() to access 'this'.
 ProjectSchema.virtual("url").get(function () {
-  return `/hub/user/${this.user._id}/project/${this.project_id}`;
+  return `/user/${this.user._id}/project/${this.project_id}`;
 });
 
 ProjectSchema.virtual("date_formatted").get(function () {

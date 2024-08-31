@@ -1,31 +1,29 @@
-const request = require('supertest');
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
-const initializeMongoServer = require('../mongoConfigTesting');
-const login = require('../routes/login');
-const hub = require('../routes/hub');
-const User = require('../models/user');
-const Project = require('../models/project');
+const request = require("supertest");
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+const initializeMongoServer = require("../mongoConfigTesting");
+const login = require("../routes/login");
+const User = require("../models/user");
+const Project = require("../models/project");
 
 dotenv.config();
-require('../auth/auth');
+require("../auth/auth");
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use('/login', login);
-app.use('/hub', hub);
+app.use("/login", login);
 
-describe('hub projects', () => {
+describe("hub projects", () => {
   // Set in-scope variables
   let userId;
   let userObjectId;
   let server;
   let projectId;
   // User login credentials
-  const user = { username: 'test', password: process.env.TEST_PASSWORD };
+  const user = { username: "test", password: process.env.TEST_PASSWORD };
   // Sign jsonwebtoken with user login and secret key imported from dotenv
   const token = jwt.sign({ user }, process.env.SECRET_KEY);
   // Create instance of supertest agent bound to express app instance, used to maintain cookie
@@ -34,12 +32,12 @@ describe('hub projects', () => {
   // Add user to test database
   async function addToTestDatabase() {
     await User.create({
-      username: 'test',
-      password: 'password',
+      username: "test",
+      password: "password",
       admin: false,
     })
       .then((res) => {
-      // Splice user id string
+        // Splice user id string
         userId = res._id.toString().slice(0, 24);
         // Get full user id
         userObjectId = res._id;
@@ -50,11 +48,11 @@ describe('hub projects', () => {
   // Add project to test database
   async function addProjectToTestDatabase() {
     // Find previously created user to attach to project
-    const user = await User.findOne({ username: 'test' });
+    const user = await User.findOne({ username: "test" });
     // Create new project
     const project = new Project({
-      title: 'title1',
-      genre: 'genre1',
+      title: "title1",
+      genre: "genre1",
       isComplete: false,
       isPublished: true,
       user: user._id,
@@ -67,14 +65,14 @@ describe('hub projects', () => {
   function loginUser() {
     return function (done) {
       request(app)
-        .post('/login')
-        .set('Content-Type', 'application/x-www-form-urlencoded')
-        .set('Cookie', [process.env.COOKIE])
+        .post("/login")
+        .set("Content-Type", "application/x-www-form-urlencoded")
+        .set("Cookie", [process.env.COOKIE])
         .send(user)
         .expect(200)
         .then(() => {
           // Set token signed by jwt to Authorization header
-          agent1.set('Authorization', `Bearer ${token}`);
+          agent1.set("Authorization", `Bearer ${token}`);
           done();
         })
         .catch((err) => {
@@ -87,7 +85,7 @@ describe('hub projects', () => {
   beforeAll(async () => {
     // Sets up MongoDB server and returns server instance
     initializeMongoServer()
-    // After promise has returned, set server variable to returned server instance
+      // After promise has returned, set server variable to returned server instance
       .then((mongo) => {
         server = mongo;
         mongo.startConnection();
@@ -105,13 +103,13 @@ describe('hub projects', () => {
     await server.stopConnection();
   });
 
-  it('login', loginUser());
-  it('Test get project list', (done) => {
+  it("login", loginUser());
+  it("Test get project list", (done) => {
     agent1
-      .get(`/hub/user/${userId}/projects`)
-      .set('Authorization', `Bearer ${token}`)
+      .get(`/user/${userId}/projects`)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
-      .expect('Content-Type', /json/)
+      .expect("Content-Type", /json/)
       .then((res) => {
         expect(res.body[0].user.username).toBe(user.username);
         expect(res.body.length).toBe(1);
@@ -122,18 +120,21 @@ describe('hub projects', () => {
         done(err);
       });
   });
-  it('Test create project', (done) => {
+  it("Test create project", (done) => {
     agent1
-      .post(`/hub/user/${userId}/project/create`)
-      .set('Authorization', `Bearer ${token}`)
+      .post(`/user/${userId}/project/create`)
+      .set("Authorization", `Bearer ${token}`)
       .send({
-        title: 'title', genre: 'genre', isComplete: false, user: userObjectId,
+        title: "title",
+        genre: "genre",
+        isComplete: false,
+        user: userObjectId,
       })
       .expect(200)
-      .expect('Content-Type', /json/)
+      .expect("Content-Type", /json/)
       .then((res) => {
-        expect(res.body.title).toBe('title');
-        expect(res.body.genre).toBe('genre');
+        expect(res.body.title).toBe("title");
+        expect(res.body.genre).toBe("genre");
         expect(res.body.isComplete).toBe(false);
 
         projectId = res.body.id;
@@ -145,15 +146,15 @@ describe('hub projects', () => {
         done(err);
       });
   });
-  it('Test get project to be updated', (done) => {
+  it("Test get project to be updated", (done) => {
     agent1
-      .get(`/hub/project/${projectId}`)
-      .set('Authorization', `Bearer ${token}`)
+      .get(`/project/${projectId}`)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
-      .expect('Content-Type', /json/)
+      .expect("Content-Type", /json/)
       .then((res) => {
-        expect(res.body.title).toBe('title');
-        expect(res.body.genre).toBe('genre');
+        expect(res.body.title).toBe("title");
+        expect(res.body.genre).toBe("genre");
         expect(res.body.isComplete).toBe(false);
 
         done();
@@ -163,18 +164,21 @@ describe('hub projects', () => {
         done(err);
       });
   });
-  it('Test update project', (done) => {
+  it("Test update project", (done) => {
     agent1
-      .patch(`/hub/project/${projectId}/update`)
-      .set('Authorization', `Bearer ${token}`)
+      .patch(`/project/${projectId}/update`)
+      .set("Authorization", `Bearer ${token}`)
       .send({
-        title: 'updated title', genre: 'updated genre', isComplete: false, user: userObjectId,
+        title: "updated title",
+        genre: "updated genre",
+        isComplete: false,
+        user: userObjectId,
       })
       .expect(200)
-      .expect('Content-Type', /json/)
+      .expect("Content-Type", /json/)
       .then((res) => {
-        expect(res.body.title).toBe('updated title');
-        expect(res.body.genre).toBe('updated genre');
+        expect(res.body.title).toBe("updated title");
+        expect(res.body.genre).toBe("updated genre");
         expect(res.body.isComplete).toBe(false);
 
         done();
@@ -184,13 +188,13 @@ describe('hub projects', () => {
         done(err);
       });
   });
-  it('Test delete project', (done) => {
+  it("Test delete project", (done) => {
     agent1
-      .delete(`/hub/project/${projectId}/delete`)
-      .set('Authorization', `Bearer ${token}`)
+      .delete(`/project/${projectId}/delete`)
+      .set("Authorization", `Bearer ${token}`)
       .expect(200)
       .then((res) => {
-        expect(res.body.message).toBe('Project deleted successfully');
+        expect(res.body.message).toBe("Project deleted successfully");
         done();
       })
       .catch((err) => {
