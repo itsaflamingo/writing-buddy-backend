@@ -34,7 +34,11 @@ ActSchema.virtual("act_id").get(function () {
 
 // Add virtual. Use function() to access 'this'.
 ActSchema.virtual("url").get(function () {
-  return `/project/${this.project._id}/act/${this.act_id}`;
+  return `/${this.act_id}`;
+});
+
+ActSchema.virtual("list_chapters").get(function () {
+  return `/${this.act_id}/chapters`;
 });
 
 ActSchema.virtual("date_formatted").get(function () {

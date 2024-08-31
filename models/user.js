@@ -69,6 +69,21 @@ UserSchema.pre("save", async function (next) {
   // next
   next();
 });
+
+// Add virtual. Use function() to access 'this'.
+UserSchema.virtual("user_id").get(function () {
+  return this._id;
+});
+
+// Add virtual. Use function() to access 'this'.
+UserSchema.virtual("url").get(function () {
+  return `/${this.user_id}`;
+});
+
+UserSchema.virtual("list_projects").get(function () {
+  return `/${this.user_id}/projects`;
+});
+
 // Add isValidPassword to UserSchema methods, compares form password with saved password
 UserSchema.methods.isValidPassword = async function (password) {
   // save this schema to user

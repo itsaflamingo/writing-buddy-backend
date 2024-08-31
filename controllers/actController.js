@@ -1,24 +1,28 @@
 // Import schema, express-validator
-const { body, validationResult } = require('express-validator');
-const async = require('async');
-const Project = require('../models/project');
-const Act = require('../models/act');
-// Get all projects
+const { body, validationResult } = require("express-validator");
+const async = require("async");
+const Project = require("../models/project");
+const Act = require("../models/act");
+// Get all acts
 exports.acts_list = (req, res, next) => {
-  Act.find({ project: req.params.project_id }, 'title genre isComplete date isPublished')
+  // Filter acts that belong to a project
+  Act.find(
+    { project: req.params.project_id },
+    "title genre isComplete date isPublished"
+  )
     .populate({
-      path: 'project',
-      model: 'Project',
+      path: "project",
+      model: "Project",
     })
     .sort({ date: -1 })
     .exec()
     .then((result) => res.json(result))
     .catch((err) => next(err));
 };
-// Post new project
+// Post new act
 exports.create_act = [
   // Sanitize and trim
-  body('title', 'Title must not be empty.')
+  body("title", "Title must not be empty.")
     .trim()
     .isLength({ min: 1 })
     .escape(),
@@ -37,7 +41,7 @@ exports.create_act = [
         }
 
         if (!project) {
-          const err = new Error('Project not found');
+          const err = new Error("Project not found");
           err.status = 404;
           return next(err);
         }
@@ -49,7 +53,8 @@ exports.create_act = [
           project: project._id,
         });
         // Data from form is valid, save blog post
-        act.save()
+        act
+          .save()
           .then((results) => {
             res.json({
               title: results.title,
@@ -62,25 +67,27 @@ exports.create_act = [
           .catch((err) => next(err));
       })
       .catch((err) => next(err));
-  }];
+  },
+];
 // Get request for patch
 exports.get_update_act = (req, res, next) => {
   // Async functions that execute sequentially
   async.waterfall(
     [
       function (callback) {
-      // Get selected project by id in parameter
+        // Get selected project by id in parameter
         Act.findById(req.params.act_id)
           .then((act) => {
             callback(null, act);
-          }).catch((err) => {
+          })
+          .catch((err) => {
             callback(err);
           });
       },
-      // Executed after Project.findById
+      // Executed after Act.findById
       function (act, callback) {
         if (act === null) {
-          const err = new Error('Act not found');
+          const err = new Error("Act not found");
           err.status = 404;
           return callback(err);
         }
@@ -96,13 +103,13 @@ exports.get_update_act = (req, res, next) => {
         project: results.project,
         date_formatted: results.date_formatted,
       });
-    },
+    }
   );
 };
-// Patch single project
+// Patch single act
 exports.patch_update_act = [
   // Validate and sanitize fields
-  body('title', 'Title must not be empty.')
+  body("title", "Title must not be empty.")
     .trim()
     .isLength({ min: 1 })
     .escape(),
@@ -113,23 +120,27 @@ exports.patch_update_act = [
 
     // If errors array is not empty, handle error
     if (!errors.isEmpty()) {
-      const err = new Error('Act not found');
+      const err = new Error("Act not found");
       err.status = 404;
       return next(err);
     }
     // Otherwise save updated post and update record
-    Act.findOneAndUpdate({ _id: req.params.act_id }, {
-      $set: {
-        title: req.body.title,
-        isComplete: req.body.isComplete,
-        isPublished: req.body.isPublished,
-        _id: req.params.act_id,
+    Act.findOneAndUpdate(
+      { _id: req.params.act_id },
+      {
+        $set: {
+          title: req.body.title,
+          isComplete: req.body.isComplete,
+          isPublished: req.body.isPublished,
+          _id: req.params.act_id,
+        },
       },
-    }, { new: true })
+      { new: true }
+    )
       .then((act) => {
         // blog post not found
         if (!act) {
-          return res.status(404).json({ message: 'Act not found' });
+          return res.status(404).json({ message: "Act not found" });
         }
         // Successful: send updated book as json object
         return res.json({
@@ -142,15 +153,16 @@ exports.patch_update_act = [
         });
       })
       .catch((err) => next(err));
-  }];
+  },
+];
 // Delete single act
 exports.delete_act = (req, res, next) => {
   Act.findByIdAndDelete(req.params.act_id)
     .then((act) => {
       if (!act) {
-        return res.status(404).json({ message: 'Act not found' });
+        return res.status(404).json({ message: "Act not found" });
       }
-      return res.json({ message: 'Act deleted successfully' });
+      return res.json({ message: "Act deleted successfully" });
     })
     .catch((err) => next(err));
 };
