@@ -83,11 +83,11 @@ UserSchema.virtual("user_id").get(function () {
 
 // Add virtual. Use function() to access 'this'.
 UserSchema.virtual("url").get(function () {
-  return `/user/${this.user_id}`;
+  return `/user/${this._id}`;
 });
 
 UserSchema.virtual("list_projects").get(function () {
-  return `/user/${this.user_id}/projects`;
+  return `/user/${this._id}/projects`;
 });
 
 // Add isValidPassword to UserSchema methods, compares form password with saved password
