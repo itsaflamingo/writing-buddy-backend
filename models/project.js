@@ -34,11 +34,11 @@ ProjectSchema.virtual("project_id").get(function () {
 
 // Add virtual. Use function() to access 'this'.
 ProjectSchema.virtual("url").get(function () {
-  return `/${this.project_id}`;
+  return `/project/${this.project_id}`;
 });
 
 ProjectSchema.virtual("list_acts").get(function () {
-  return `/${this.project_id}/acts`;
+  return `/project/${this.project_id}/acts`;
 });
 
 ProjectSchema.virtual("date_formatted").get(function () {

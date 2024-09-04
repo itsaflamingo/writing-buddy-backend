@@ -36,7 +36,7 @@ ChapterSchema.virtual("chapter_id").get(function () {
 
 // Add virtual. Use function() to access 'this'.
 ChapterSchema.virtual("url").get(function () {
-  return `/${this.chapter_id}`;
+  return `/chapter/${this.chapter_id}`;
 });
 
 ChapterSchema.virtual("date_formatted").get(function () {
