@@ -87,7 +87,7 @@ UserSchema.virtual("url").get(function () {
 });
 
 UserSchema.virtual("list_projects").get(function () {
-  return `/user/${this._id}/projects`;
+  return `/user/${this.user_id}/projects`;
 });
 
 // Add isValidPassword to UserSchema methods, compares form password with saved password
