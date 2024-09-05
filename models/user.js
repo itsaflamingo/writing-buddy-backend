@@ -64,6 +64,64 @@ const UserSchema = new Schema(
     toJSON: { virtuals: true },
   }
 );
+const UserSchema = new Schema(
+  {
+    username: { type: String, required: true },
+    password: { type: String, required: true },
+    admin: { type: Boolean, required: true },
+    profileInfo: {
+      profilePicture: { type: String },
+      bio: { type: String },
+      followers: [
+        {
+          user: {
+            type: Schema.Types.ObjectId,
+            ref: "user",
+            required: false,
+          },
+        },
+      ],
+      following: [
+        {
+          user: {
+            type: Schema.Types.ObjectId,
+            ref: "user",
+            required: false,
+          },
+        },
+      ],
+      pinnedProjects: [
+        {
+          project: {
+            type: Schema.Types.ObjectId,
+            ref: "project",
+            required: false,
+          },
+        },
+      ],
+      postingTracker: [
+        {
+          date: { type: Date, default: Date.now, required: false },
+          month: { type: Number },
+          year: { type: Number },
+          contributions: [
+            {
+              project: {
+                type: Schema.Types.ObjectId,
+                ref: "project",
+              },
+            },
+          ],
+          dayContributions: { type: Number },
+        },
+      ],
+    },
+  },
+  {
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+  }
+);
 // Save individual hashed password
 UserSchema.pre("save", async function (next) {
   // select schema
