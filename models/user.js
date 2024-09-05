@@ -78,7 +78,7 @@ UserSchema.pre("save", async function (next) {
 
 // Add virtual. Use function() to access 'this'.
 UserSchema.virtual("user_id").get(function () {
-  return this.user_id;
+  return this._id;
 });
 
 // Add virtual. Use function() to access 'this'.
