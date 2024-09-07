@@ -142,15 +142,10 @@ exports.patch_update_act = [
         if (!act) {
           return res.status(404).json({ message: "Act not found" });
         }
-        // Successful: send updated book as json object
-        return res.json({
-          title: act.title,
-          isComplete: act.isComplete,
-          isPublished: act.isPublished,
-          project: act.project,
-          date_formatted: act.date_formatted,
-          _id: act._id,
-        });
+        // add virtuals to response
+        const actWithVirtuals = act.toJSON({ virtuals: true });
+        // else, return response with data
+        return res.json(actWithVirtuals);
       })
       .catch((err) => next(err));
   },

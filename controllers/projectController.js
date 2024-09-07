@@ -139,17 +139,10 @@ exports.patch_update_project = [
         if (!project) {
           return res.status(404).json({ message: "Project not found" });
         }
-        // else, return response with project data
-        return res.json({
-          title: project.title,
-          genre: project.genre,
-          isComplete: project.isComplete,
-          isPublished: project.isPublished,
-          date: project.date,
-          user: project.user,
-          date_formatted: project.date_formatted,
-          id: project._id,
-        });
+        // add virtuals to response
+        const projectWithVirtuals = project.toJSON({ virtuals: true });
+        // else, return response with data
+        return res.json(projectWithVirtuals);
       })
       .catch((err) => next(err));
   },

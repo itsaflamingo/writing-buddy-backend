@@ -49,8 +49,10 @@ exports.patch_update_user = [
         if (!user) {
           return res.status(404).json({ message: "User not found" });
         }
-        // else, return response with user data
-        return res.json(user);
+        // add virtuals to response
+        const userWithVirtuals = user.toJSON({ virtuals: true });
+        // else, return response with project data
+        return res.json(userWithVirtuals);
       });
   },
 ];
