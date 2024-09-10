@@ -17,12 +17,16 @@ exports.patch_update_user = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  body("password", "Password must be minimum 3 characters")
+  body("password", "Password must be minimum 2 characters")
     .trim()
-    .isLength({ min: 3 })
+    .isLength({ min: 2 })
     .escape(),
   (req, res, next) => {
     const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
     return User.findOneAndUpdate(
       { _id: req.params.id },
@@ -53,6 +57,7 @@ exports.patch_update_user = [
         const userWithVirtuals = user.toJSON({ virtuals: true });
         // else, return response with project data
         return res.json(userWithVirtuals);
-      });
+      })
+      .catch((err) => next(err));
   },
 ];

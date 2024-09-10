@@ -18,7 +18,7 @@ const UserSchema = new Schema(
         {
           user: {
             type: Schema.Types.ObjectId,
-            ref: "user",
+            ref: "User",
             required: false,
           },
         },
@@ -27,7 +27,7 @@ const UserSchema = new Schema(
         {
           user: {
             type: Schema.Types.ObjectId,
-            ref: "user",
+            ref: "User",
             required: false,
           },
         },
@@ -36,7 +36,7 @@ const UserSchema = new Schema(
         {
           project: {
             type: Schema.Types.ObjectId,
-            ref: "project",
+            ref: "Project",
             required: false,
           },
         },
@@ -50,7 +50,7 @@ const UserSchema = new Schema(
             {
               project: {
                 type: Schema.Types.ObjectId,
-                ref: "project",
+                ref: "Project",
               },
             },
           ],
