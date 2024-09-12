@@ -34,8 +34,8 @@ exports.patch_update_user = [
         $set: {
           username: req.body.username,
           password: req.body.password,
-          "profileInfo.profilePicture": req.body.profilePicture,
-          "profileInfo.bio": req.body.bio,
+          "profileInfo.profilePicture": req.body.profileInfo.profilePicture,
+          "profileInfo.bio": req.body.profileInfo.bio,
         },
       },
       { new: true }
