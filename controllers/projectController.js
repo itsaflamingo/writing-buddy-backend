@@ -55,18 +55,8 @@ exports.create_project = [
         // Data from form is valid, save blog post
         project
           .save()
-          .then((results) =>
-            res.json({
-              title: results.title,
-              genre: results.genre,
-              isComplete: results.isComplete,
-              isPublished: results.isPublished,
-              id: results._id,
-              date_formatted: results.date_formatted,
-            })
-          )
+          .then((results) => res.json(results))
           .catch((err) => err);
-        return project;
       })
       .catch((err) => err);
   },

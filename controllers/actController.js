@@ -56,13 +56,7 @@ exports.create_act = [
         act
           .save()
           .then((results) => {
-            res.json({
-              title: results.title,
-              isComplete: results.isComplete,
-              isPublished: results.isPublished,
-              id: results._id,
-              date_formatted: results.date_formatted,
-            });
+            res.json(results);
           })
           .catch((err) => next(err));
       })
