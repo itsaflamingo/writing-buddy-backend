@@ -3,6 +3,7 @@ const { body, validationResult } = require("express-validator");
 const async = require("async");
 const Act = require("../models/act");
 const Chapter = require("../models/chapter");
+const updateContributions = require("./contributionsController");
 // Get all chapters
 exports.chapters_list = (req, res, next) => {
   Chapter.find(
@@ -65,15 +66,9 @@ exports.create_chapter = [
         chapter
           .save()
           .then((results) => {
-            res.json({
-              title: results.title,
-              number: results.number,
-              body: results.body,
-              isComplete: results.isComplete,
-              isPublished: results.isPublished,
-              id: results._id,
-              date_formatted: results.date_formatted,
-            });
+            // Update contributions
+            updateContributions();
+            res.json(results);
           })
           .catch((err) => next(err));
       })
@@ -164,6 +159,8 @@ exports.patch_update_chapter = [
         }
         // add virtuals to response
         const chapterWithVirtuals = chapter.toJSON({ virtuals: true });
+        // Update contributions
+        updateContributions();
         // else, return response with data
         return res.json(chapterWithVirtuals);
       })
