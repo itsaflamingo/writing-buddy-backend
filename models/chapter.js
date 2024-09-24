@@ -17,6 +17,12 @@ const ChapterSchema = new Schema(
       required: true,
       onDelete: "cascade",
     },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+      onDelete: "cascade",
+    },
     date: { type: Date, default: Date.now, required: true },
   },
   {

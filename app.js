@@ -45,6 +45,7 @@ const userRouter = require("./routes/user");
 const projectRouter = require("./routes/project");
 const actRouter = require("./routes/act");
 const chapterRouter = require("./routes/chapter");
+const contributionsRouter = require("./routes/contributions");
 
 // used to authenticate protected routes
 const authenticate = passport.authenticate("jwt", { session: false });
@@ -58,6 +59,7 @@ app.use("/user", authenticate, userRouter);
 app.use("/project", authenticate, projectRouter);
 app.use("/act", authenticate, actRouter);
 app.use("/chapter", authenticate, chapterRouter);
+app.use("/contributions", authenticate, contributionsRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
